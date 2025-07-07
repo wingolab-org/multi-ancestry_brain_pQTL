@@ -1,0 +1,11 @@
+====Run MESuSiE in each gene====
+#the ld matrix is produced in-samples, i.e not from external panels
+#thus, ld-mismatch-checking step is not needed here.
+#in /home/yliu/work_dir/ProteinPrediction/Diversity_pQTL/run.11012023/finemap/MESuSiE
+1) on cluster: prepare plink files in each gene using lmm assoc results from all 3 populations
+qsub2 "perl ~/bin/multi_ancestry_prepare_files_for_MESuSiE.pl NHW_AA_Hisp.fam.path "
+2) on clusters: match allele; ld matrix;  match allele for lmm assoc in each gene
+ls -d multi_out/ENSG* >all.dir.list
+for f in $(less all.dir.list); qsub2 "~/bin/multi_ancestry_prepare_files_for_MESuSiE_ld_and_asso.match.sh $f";done
+3) on clusters: run MESuSie for each gene 
+for f in $(less all.dir.list); qsub2 "~/bin/MESuSiE_run_from_lmm_loopdir.match.sh $f";done
